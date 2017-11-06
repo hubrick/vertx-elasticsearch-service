@@ -16,24 +16,31 @@
 package com.hubrick.vertx.elasticsearch.model;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.annotations.GenIgnore;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 @DataObject
 public class DeleteByQueryResponse extends AbstractRawResponse<DeleteByQueryResponse> {
 
-    private Long took;
+    private Long took; // in ms
     private Boolean timedOut;
-    private Long totalFound;
-    private Long totalDeleted;
-    private Long totalMissing;
-    private Long totalFailed;
+    private Long deleted;
+    private Integer batches;
+    private Long versionConflicts;
+    private Long retries;
+    private Long throttled; // in ms
+    private JsonArray failures = new JsonArray();
+
 
     public static final String JSON_FIELD_TOOK = "took";
     public static final String JSON_FIELD_TIMED_OUT = "timedOut";
-    public static final String JSON_FIELD_TOTAL_FOUND = "totalFound";
-    public static final String JSON_FIELD_TOTAL_DELETED = "totalDeleted";
-    public static final String JSON_FIELD_TOTAL_MISSING = "totalMissing";
-    public static final String JSON_FIELD_TOTAL_FAILED = "totalFailed";
+    public static final String JSON_FIELD_DELETED = "deleted";
+    public static final String JSON_FIELD_BATCHES = "batches";
+    public static final String JSON_FIELD_VERSION_CONFLICTS = "versionConflicts";
+    public static final String JSON_FIELD_RETRIES = "retries";
+    public static final String JSON_FIELD_THROTTLED = "throttled";
+    public static final String JSON_FIELD_FAILURES = "failures";
 
     public DeleteByQueryResponse() {
     }
@@ -43,9 +50,13 @@ public class DeleteByQueryResponse extends AbstractRawResponse<DeleteByQueryResp
 
         this.took = other.getTook();
         this.timedOut = other.getTimedOut();
-        this.totalFound = other.getTotalFound();
-        this.totalMissing = other.getTotalMissing();
-        this.totalFailed = other.getTotalFailed();
+        this.deleted = other.getDeleted();
+        this.batches = other.getBatches();
+        this.versionConflicts = other.getVersionConflicts();
+        this.retries = other.getRetries();
+        this.throttled = other.getThrottled();
+        this.failures = other.getFailures();
+
     }
 
     public DeleteByQueryResponse(JsonObject json) {
@@ -53,10 +64,12 @@ public class DeleteByQueryResponse extends AbstractRawResponse<DeleteByQueryResp
 
         this.took = json.getLong(JSON_FIELD_TOOK);
         this.timedOut = json.getBoolean(JSON_FIELD_TIMED_OUT);
-        this.totalFound = json.getLong(JSON_FIELD_TOTAL_FOUND);
-        this.totalDeleted = json.getLong(JSON_FIELD_TOTAL_DELETED);
-        this.totalMissing = json.getLong(JSON_FIELD_TOTAL_MISSING);
-        this.totalFailed = json.getLong(JSON_FIELD_TOTAL_FAILED);
+        this.deleted = json.getLong(JSON_FIELD_DELETED);
+        this.batches = json.getInteger(JSON_FIELD_BATCHES);
+        this.versionConflicts = json.getLong(JSON_FIELD_VERSION_CONFLICTS);
+        this.retries = json.getLong(JSON_FIELD_RETRIES);
+        this.throttled = json.getLong(JSON_FIELD_THROTTLED);
+        this.failures = json.getJsonArray(JSON_FIELD_FAILURES);
     }
 
     public Long getTook() {
@@ -77,39 +90,63 @@ public class DeleteByQueryResponse extends AbstractRawResponse<DeleteByQueryResp
         return this;
     }
 
-    public Long getTotalFound() {
-        return totalFound;
+    public Long getDeleted() {
+        return deleted;
     }
 
-    public DeleteByQueryResponse setTotalFound(Long totalFound) {
-        this.totalFound = totalFound;
+    public DeleteByQueryResponse setDeleted(Long deleted) {
+        this.deleted = deleted;
         return this;
     }
 
-    public Long getTotalDeleted() {
-        return totalDeleted;
+    public Integer getBatches() {
+        return batches;
     }
 
-    public DeleteByQueryResponse setTotalDeleted(Long totalDeleted) {
-        this.totalDeleted = totalDeleted;
+    public DeleteByQueryResponse setBatches(Integer batches) {
+        this.batches = batches;
         return this;
     }
 
-    public Long getTotalMissing() {
-        return totalMissing;
+    public Long getVersionConflicts() {
+        return versionConflicts;
     }
 
-    public DeleteByQueryResponse setTotalMissing(Long totalMissing) {
-        this.totalMissing = totalMissing;
+    public DeleteByQueryResponse setVersionConflicts(Long versionConflicts) {
+        this.versionConflicts = versionConflicts;
         return this;
     }
 
-    public Long getTotalFailed() {
-        return totalFailed;
+    public Long getRetries() {
+        return retries;
     }
 
-    public DeleteByQueryResponse setTotalFailed(Long totalFailed) {
-        this.totalFailed = totalFailed;
+    public DeleteByQueryResponse setRetries(Long retries) {
+        this.retries = retries;
+        return this;
+    }
+
+    public Long getThrottled() {
+        return throttled;
+    }
+
+    public DeleteByQueryResponse setThrottled(Long throttled) {
+        this.throttled = throttled;
+        return this;
+    }
+
+    public JsonArray getFailures() {
+        return failures;
+    }
+
+    @GenIgnore
+    public DeleteByQueryResponse addFailure(JsonObject failure) {
+        this.failures.add(failure);
+        return this;
+    }
+
+    public DeleteByQueryResponse setFailures(JsonArray failures) {
+        this.failures = failures;
         return this;
     }
 
@@ -119,10 +156,12 @@ public class DeleteByQueryResponse extends AbstractRawResponse<DeleteByQueryResp
 
         if (took != null) json.put(JSON_FIELD_TOOK, took);
         if (timedOut != null) json.put(JSON_FIELD_TIMED_OUT, timedOut);
-        if (totalFound != null) json.put(JSON_FIELD_TOTAL_FOUND, totalFound);
-        if (totalDeleted != null) json.put(JSON_FIELD_TOTAL_DELETED, totalDeleted);
-        if (totalMissing != null) json.put(JSON_FIELD_TOTAL_MISSING, totalMissing);
-        if (totalFailed != null) json.put(JSON_FIELD_TOTAL_FAILED, totalFailed);
+        if (deleted != null) json.put(JSON_FIELD_DELETED, deleted);
+        if (batches != null) json.put(JSON_FIELD_BATCHES, batches);
+        if (versionConflicts != null) json.put(JSON_FIELD_VERSION_CONFLICTS, versionConflicts);
+        if (retries != null) json.put(JSON_FIELD_RETRIES, retries);
+        if (throttled != null) json.put(JSON_FIELD_THROTTLED, throttled);
+        if (failures != null) json.put(JSON_FIELD_FAILURES, failures);
 
         return json.mergeIn(super.toJson());
     }

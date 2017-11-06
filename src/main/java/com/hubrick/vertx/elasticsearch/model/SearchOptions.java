@@ -21,8 +21,7 @@ import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.common.ParseFieldMatcher;
-import org.elasticsearch.script.ScriptService;
+import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.search.sort.SortOrder;
 
 import java.util.ArrayList;
@@ -53,12 +52,8 @@ public class SearchOptions {
     private Boolean fetchSource;
     private List<String> fields = new ArrayList<>();
     private Boolean trackScores;
-    private JsonObject aggregations;
+    private List<AggregationOption> aggregations = new ArrayList<>();
     private List<BaseSortOption> sorts = new ArrayList<>();
-    private JsonObject extraSource;
-    private String templateName;
-    private ScriptService.ScriptType templateType;
-    private JsonObject templateParams;
     private Map<String, ScriptFieldOption> scriptFields = new HashMap<>();
 
     public static final String JSON_FIELD_TYPES = "types";
@@ -80,10 +75,6 @@ public class SearchOptions {
     public static final String JSON_FIELD_TRACK_SCORES = "trackScores";
     public static final String JSON_FIELD_AGGREGATIONS = "aggregations";
     public static final String JSON_FIELD_SORTS = "sorts";
-    public static final String JSON_FIELD_EXTRA_SOURCE = "extraSource";
-    public static final String JSON_FIELD_TEMPLATE_NAME = "templateName";
-    public static final String JSON_FIELD_TEMPLATE_TYPE = "templateType";
-    public static final String JSON_FIELD_TEMPLATE_PARAMS = "templateParams";
     public static final String JSON_FIELD_SCRIPT_FIELDS = "scriptFields";
 
     public SearchOptions() {
@@ -109,10 +100,6 @@ public class SearchOptions {
         trackScores = other.isTrackScores();
         aggregations = other.getAggregations();
         sorts = other.getSorts();
-        extraSource = other.getExtraSource();
-        templateName = other.getTemplateName();
-        templateType = other.getTemplateType();
-        templateParams = other.getTemplateParams();
         scriptFields = other.scriptFields;
     }
 
@@ -134,19 +121,16 @@ public class SearchOptions {
         fetchSource = json.getBoolean(JSON_FIELD_FETCH_SOURCE);
         fields = json.getJsonArray(JSON_FIELD_FIELDS, new JsonArray()).getList();
         trackScores = json.getBoolean(JSON_FIELD_TRACK_SCORES);
-        aggregations = json.getJsonObject(JSON_FIELD_AGGREGATIONS);
-        extraSource = json.getJsonObject(JSON_FIELD_EXTRA_SOURCE);
-        templateName = json.getString(JSON_FIELD_TEMPLATE_NAME);
 
-        String s = json.getString(JSON_FIELD_TEMPLATE_TYPE);
-        if (!Strings.isNullOrEmpty(s)) {
-            templateType = ScriptService.ScriptType.valueOf(s.toUpperCase());
+        JsonArray aggregationsJson = json.getJsonArray(JSON_FIELD_AGGREGATIONS);
+        if (aggregationsJson != null) {
+            for (int i = 0; i < aggregationsJson.size(); i++) {
+                aggregations.add(new AggregationOption(aggregationsJson.getJsonObject(i)));
+            }
         }
 
-        templateParams = json.getJsonObject(JSON_FIELD_TEMPLATE_PARAMS);
-
-        s = json.getString(JSON_FIELD_SEARCH_TYPE);
-        if (s != null) searchType = SearchType.fromString(s, ParseFieldMatcher.EMPTY);
+        String s = json.getString(JSON_FIELD_SEARCH_TYPE);
+        if (s != null) searchType = SearchType.fromString(s);
 
         JsonArray fieldSortOptionsJson = json.getJsonArray(JSON_FIELD_SORTS);
         if (fieldSortOptionsJson != null) {
@@ -191,14 +175,24 @@ public class SearchOptions {
         return this;
     }
 
-    public JsonObject getAggregations() {
+    public List<AggregationOption> getAggregations() {
         return aggregations;
     }
 
-    public SearchOptions setAggregations(JsonObject aggregations) {
+    public SearchOptions setAggregations(List<AggregationOption> aggregations) {
         this.aggregations = aggregations;
         return this;
     }
+
+    @GenIgnore
+    public SearchOptions addAggregation(AggregationOption aggregation) {
+        if (this.aggregations == null) {
+            this.aggregations = new ArrayList<>();
+        }
+        this.aggregations.add(aggregation);
+        return this;
+    }
+
 
     public SearchType getSearchType() {
         return searchType;
@@ -348,42 +342,6 @@ public class SearchOptions {
         return this;
     }
 
-    public JsonObject getExtraSource() {
-        return extraSource;
-    }
-
-    public SearchOptions setExtraSource(JsonObject extraSource) {
-        this.extraSource = extraSource;
-        return this;
-    }
-
-    public String getTemplateName() {
-        return templateName;
-    }
-
-    public SearchOptions setTemplateName(String templateName) {
-        this.templateName = templateName;
-        return this;
-    }
-
-    public ScriptService.ScriptType getTemplateType() {
-        return templateType;
-    }
-
-    public SearchOptions setTemplateType(ScriptService.ScriptType templateType) {
-        this.templateType = templateType;
-        return this;
-    }
-
-    public JsonObject getTemplateParams() {
-        return templateParams;
-    }
-
-    public SearchOptions setTemplateParams(JsonObject templateParams) {
-        this.templateParams = templateParams;
-        return this;
-    }
-
     public Map<String, ScriptFieldOption> getScriptFields() {
         return scriptFields;
     }
@@ -421,12 +379,15 @@ public class SearchOptions {
         if (fetchSource != null) json.put(JSON_FIELD_FETCH_SOURCE, fetchSource);
         if (!fields.isEmpty()) json.put(JSON_FIELD_FIELDS, new JsonArray(fields));
         if (trackScores != null) json.put(JSON_FIELD_TRACK_SCORES, trackScores);
-        if (aggregations != null) json.put(JSON_FIELD_AGGREGATIONS, aggregations);
         if (explain != null) json.put(JSON_FIELD_EXPLAIN, explain);
-        if (templateName != null) json.put(JSON_FIELD_TEMPLATE_NAME, templateName);
-        if (templateType != null) json.put(JSON_FIELD_TEMPLATE_TYPE, templateType.toString());
-        if (templateParams != null) json.put(JSON_FIELD_TEMPLATE_PARAMS, templateParams);
-        if (extraSource != null) json.put(JSON_FIELD_EXTRA_SOURCE, extraSource);
+
+        if (aggregations != null && !aggregations.isEmpty()) {
+            JsonArray aggregationArray = new JsonArray();
+            for (AggregationOption option : aggregations) {
+                aggregationArray.add(option.toJson());
+            }
+            json.put(JSON_FIELD_AGGREGATIONS, aggregationArray);
+        }
 
         if (!sorts.isEmpty()) {
             JsonArray jsonSorts = new JsonArray();

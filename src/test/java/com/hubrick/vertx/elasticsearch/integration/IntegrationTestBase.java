@@ -47,6 +47,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
 import java.util.Scanner;
@@ -201,7 +202,7 @@ public abstract class IntegrationTestBase extends AbstractVertxIntegrationTest {
 
         final Async async = testContext.async();
         SearchOptions options = new SearchOptions()
-                .setSearchType(SearchType.SCAN)
+                .setSearchType(SearchType.DEFAULT)
                 .setScroll("5m")
                 .setQuery(new JsonObject().put("match_all", new JsonObject()));
 
@@ -293,9 +294,9 @@ public abstract class IntegrationTestBase extends AbstractVertxIntegrationTest {
                 })
                 .subscribe(
                         deleteByQueryResponse -> {
-                            assertThat(testContext, deleteByQueryResponse.getTotalFound(), is(1l));
-                            assertThat(testContext, deleteByQueryResponse.getTotalDeleted(), is(1l));
-                            assertThat(testContext, deleteByQueryResponse.getTotalFailed(), is(0l));
+                            assertThat(testContext, deleteByQueryResponse.getTimedOut(), is(false));
+                            assertThat(testContext, deleteByQueryResponse.getDeleted(), is(1L));
+                            assertThat(testContext, deleteByQueryResponse.getFailures().size(), is(0));
 
                             async.complete();
                         },
@@ -314,7 +315,7 @@ public abstract class IntegrationTestBase extends AbstractVertxIntegrationTest {
                             assertThat(testContext, deleteResponse.getType(), is(type));
                             assertThat(testContext, deleteResponse.getId(), is(id));
                             assertThat(testContext, deleteResponse.getFound(), is(true));
-                            assertThat(testContext, deleteResponse.getVersion(), greaterThan(0l));
+                            assertThat(testContext, deleteResponse.getVersion(), greaterThan(0L));
 
                             async.complete();
                         },

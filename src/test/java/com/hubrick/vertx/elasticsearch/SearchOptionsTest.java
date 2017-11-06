@@ -20,13 +20,10 @@ import com.hubrick.vertx.elasticsearch.model.ScriptSortOption;
 import com.hubrick.vertx.elasticsearch.model.SearchOptions;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.script.ScriptService;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * Unit tests for {@link SearchOptions}
@@ -44,7 +41,7 @@ public class SearchOptionsTest {
         options1 = new SearchOptions()
                 .addType("type1")
                 .addType("type2")
-                .setSearchType(SearchType.QUERY_AND_FETCH)
+                .setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setScroll("scroll")
                 .setTimeout("timeout")
                 .setTerminateAfter(10)
@@ -61,15 +58,11 @@ public class SearchOptionsTest {
                 .addField("field1")
                 .addField("field2")
                 .setTrackScores(true)
-                .setAggregations(new JsonObject().put("name", "name"))
+                //.addAggregation(AggregationBuilders.terms("name"))
                 .addFieldSort("status", SortOrder.ASC)
                 .addFieldSort("insert_date", SortOrder.ASC)
                 .addScripSort("doc['score']", ScriptSortOption.Type.NUMBER, new JsonObject(), SortOrder.ASC)
-                .addScriptField("script_field", "doc['score']", new JsonObject().put("param1", ImmutableList.of("1", "2", "3")))
-                .setExtraSource(new JsonObject().put("extra", "1"))
-                .setTemplateName("templateName")
-                .setTemplateType(ScriptService.ScriptType.INDEXED)
-                .setTemplateParams(new JsonObject().put("template_param", "sample_param"));
+                .addScriptField("script_field", "doc['score']", new JsonObject().put("param1", ImmutableList.of("1", "2", "3")));
 
         json1 = options1.toJson();
 
@@ -82,36 +75,6 @@ public class SearchOptionsTest {
         json2 = options2.toJson();
 
         assertEquals(json1.encode(), json2.encode());
-    }
-
-    @Test
-    public void testSetTemplateTypeFromJson() {
-
-        JsonObject json = new JsonObject();
-
-        try {
-            json.put("templateType", "not-a-real-enum");
-            new SearchOptions(json);
-            fail("Expected exception");
-        } catch (IllegalArgumentException e) {
-            // Expected
-        }
-
-        json.put("templateType", "file");
-        SearchOptions options = new SearchOptions(json);
-        assertEquals(options.getTemplateType(), ScriptService.ScriptType.FILE);
-
-        json.put("templateType", "indexed");
-        options = new SearchOptions(json);
-        assertEquals(options.getTemplateType(), ScriptService.ScriptType.INDEXED);
-
-        json.put("templateType", "inline");
-        options = new SearchOptions(json);
-        assertEquals(options.getTemplateType(), ScriptService.ScriptType.INLINE);
-
-        json.remove("templateType");
-        options = new SearchOptions(json);
-        assertNull(options.getTemplateType());
     }
 
 }

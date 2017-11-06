@@ -33,18 +33,14 @@ public class GetOptions extends AbstractOptions<GetOptions> {
     private Boolean fetchSource;
     private List<String> fetchSourceIncludes = new ArrayList<>();
     private List<String> fetchSourceExcludes = new ArrayList<>();
-    private Boolean transformSource;
     private Boolean realtime;
-    private Boolean ignoreErrorsOnGeneratedFields;
 
     public static final String FIELD_PREFERENCE = "preference";
     public static final String FIELD_FIELDS = "fields";
     public static final String FIELD_FETCH_SOURCE = "fetchSource";
     public static final String FIELD_FETCH_SOURCE_INCLUDES = "fetchSourceIncludes";
     public static final String FIELD_FETCH_SOURCE_EXCLUDES = "fetchSourceExcludes";
-    public static final String FIELD_TRANSFORM_SOURCE = "transformSource";
     public static final String FIELD_REALTIME = "realtime";
-    public static final String FIELD_IGNORE_ERROR_ON_GENERATED_FIELDS = "ignoreErrorsOnGeneratedFields";
 
     public GetOptions() {
     }
@@ -57,9 +53,7 @@ public class GetOptions extends AbstractOptions<GetOptions> {
         fetchSource = other.isFetchSource();
         fetchSourceIncludes = other.getFetchSourceIncludes();
         fetchSourceExcludes = other.getFetchSourceExcludes();
-        transformSource = other.isTransformSource();
         realtime = other.isRealtime();
-        ignoreErrorsOnGeneratedFields = other.isIgnoreErrorsOnGeneratedFields();
     }
 
     public GetOptions(JsonObject json) {
@@ -70,9 +64,7 @@ public class GetOptions extends AbstractOptions<GetOptions> {
         fetchSource = json.getBoolean(FIELD_FETCH_SOURCE);
         fetchSourceIncludes = json.getJsonArray(FIELD_FETCH_SOURCE_INCLUDES, new JsonArray()).getList();
         fetchSourceExcludes = json.getJsonArray(FIELD_FETCH_SOURCE_EXCLUDES, new JsonArray()).getList();
-        transformSource = json.getBoolean(FIELD_TRANSFORM_SOURCE);
         realtime = json.getBoolean(FIELD_REALTIME);
-        ignoreErrorsOnGeneratedFields = json.getBoolean(FIELD_IGNORE_ERROR_ON_GENERATED_FIELDS);
 
     }
 
@@ -125,30 +117,12 @@ public class GetOptions extends AbstractOptions<GetOptions> {
         return this;
     }
 
-    public Boolean isTransformSource() {
-        return transformSource;
-    }
-
-    public GetOptions setTransformSource(Boolean transformSource) {
-        this.transformSource = transformSource;
-        return this;
-    }
-
     public Boolean isRealtime() {
         return realtime;
     }
 
     public GetOptions setRealtime(Boolean realtime) {
         this.realtime = realtime;
-        return this;
-    }
-
-    public Boolean isIgnoreErrorsOnGeneratedFields() {
-        return ignoreErrorsOnGeneratedFields;
-    }
-
-    public GetOptions setIgnoreErrorsOnGeneratedFields(Boolean ignoreErrorsOnGeneratedFields) {
-        this.ignoreErrorsOnGeneratedFields = ignoreErrorsOnGeneratedFields;
         return this;
     }
 
@@ -161,9 +135,7 @@ public class GetOptions extends AbstractOptions<GetOptions> {
         if (isFetchSource() != null) json.put(FIELD_FETCH_SOURCE, isFetchSource());
         if (!getFetchSourceIncludes().isEmpty()) json.put(FIELD_FETCH_SOURCE_INCLUDES, new JsonArray(getFetchSourceIncludes()));
         if (!getFetchSourceExcludes().isEmpty()) json.put(FIELD_FETCH_SOURCE_EXCLUDES, new JsonArray(getFetchSourceExcludes()));
-        if (isTransformSource() != null) json.put(FIELD_TRANSFORM_SOURCE, isTransformSource());
         if (isRealtime() != null) json.put(FIELD_REALTIME, isRealtime());
-        if (isIgnoreErrorsOnGeneratedFields() != null) json.put(FIELD_IGNORE_ERROR_ON_GENERATED_FIELDS, isIgnoreErrorsOnGeneratedFields());
 
         return json;
     }

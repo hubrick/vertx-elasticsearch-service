@@ -44,13 +44,11 @@ public class GetOptionsTest {
                 .addField("field2")
                 .setFetchSource(true)
                 .setFetchSource(Arrays.asList("incl1", "incl2"), Arrays.asList("excl1", "excl2"))
-                .setTransformSource(true)
-                .setRealtime(true)
-                .setIgnoreErrorsOnGeneratedFields(true);
+                .setRealtime(true);
 
         json1= options1.toJson();
 
-        assertEquals(8, json1.fieldNames().size());
+        assertEquals(6, json1.fieldNames().size());
 
         GetOptions options2 = new GetOptions(json1);
         JsonObject json2 = options2.toJson();

@@ -28,8 +28,6 @@ public interface ElasticSearchConfigurator {
 
     boolean getClientTransportSniff();
 
-    boolean getSettingsRequireUnits();
-
     List<TransportAddress> getTransportAddresses();
 
 }

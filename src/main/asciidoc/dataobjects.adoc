@@ -19,6 +19,23 @@
 |[[version]]`version`|`Number (Long)`|-
 |===
 
+[[AggregationOption]]
+== AggregationOption
+
+++++
+ Aggregation option
+++++
+'''
+
+[cols=">25%,^25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[definition]]`definition`|`Json object`|-
+|[[name]]`name`|`String`|-
+|[[type]]`type`|`link:enums.html#AggregationType[AggregationType]`|-
+|===
+
 [[BaseSortOption]]
 == BaseSortOption
 
@@ -91,13 +108,15 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
+|[[batches]]`batches`|`Number (Integer)`|-
+|[[deleted]]`deleted`|`Number (Long)`|-
+|[[failures]]`failures`|`Json array`|-
 |[[rawResponse]]`rawResponse`|`Json object`|-
+|[[retries]]`retries`|`Number (Long)`|-
+|[[throttled]]`throttled`|`Number (Long)`|-
 |[[timedOut]]`timedOut`|`Boolean`|-
 |[[took]]`took`|`Number (Long)`|-
-|[[totalDeleted]]`totalDeleted`|`Number (Long)`|-
-|[[totalFailed]]`totalFailed`|`Number (Long)`|-
-|[[totalFound]]`totalFound`|`Number (Long)`|-
-|[[totalMissing]]`totalMissing`|`Number (Long)`|-
+|[[versionConflicts]]`versionConflicts`|`Number (Long)`|-
 |===
 
 [[DeleteOptions]]
@@ -112,13 +131,13 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[consistencyLevel]]`consistencyLevel`|`link:enums.html#WriteConsistencyLevel[WriteConsistencyLevel]`|-
 |[[parent]]`parent`|`String`|-
 |[[refresh]]`refresh`|`Boolean`|-
 |[[routing]]`routing`|`String`|-
 |[[timeout]]`timeout`|`String`|-
 |[[version]]`version`|`Number (Long)`|-
 |[[versionType]]`versionType`|`link:enums.html#VersionType[VersionType]`|-
+|[[waitForActiveShard]]`waitForActiveShard`|`Number (Integer)`|-
 |===
 
 [[DeleteResponse]]
@@ -184,13 +203,11 @@
 |[[fetchSourceExcludes]]`fetchSourceExcludes`|`Array of String`|-
 |[[fetchSourceIncludes]]`fetchSourceIncludes`|`Array of String`|-
 |[[fields]]`fields`|`Array of String`|-
-|[[ignoreErrorsOnGeneratedFields]]`ignoreErrorsOnGeneratedFields`|`Boolean`|-
 |[[parent]]`parent`|`String`|-
 |[[preference]]`preference`|`String`|-
 |[[realtime]]`realtime`|`Boolean`|-
 |[[refresh]]`refresh`|`Boolean`|-
 |[[routing]]`routing`|`String`|-
-|[[transformSource]]`transformSource`|`Boolean`|-
 |[[version]]`version`|`Number (Long)`|-
 |[[versionType]]`versionType`|`link:enums.html#VersionType[VersionType]`|-
 |===
@@ -273,7 +290,6 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[consistencyLevel]]`consistencyLevel`|`link:enums.html#WriteConsistencyLevel[WriteConsistencyLevel]`|-
 |[[id]]`id`|`String`|-
 |[[opType]]`opType`|`link:enums.html#OpType[OpType]`|-
 |[[parent]]`parent`|`String`|-
@@ -284,6 +300,7 @@
 |[[ttl]]`ttl`|`Number (Long)`|-
 |[[version]]`version`|`Number (Long)`|-
 |[[versionType]]`versionType`|`link:enums.html#VersionType[VersionType]`|-
+|[[waitForActiveShard]]`waitForActiveShard`|`Number (Integer)`|-
 |===
 
 [[IndexResponse]]
@@ -366,9 +383,8 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[aggregations]]`aggregations`|`Json object`|-
+|[[aggregations]]`aggregations`|`Array of link:dataobjects.html#AggregationOption[AggregationOption]`|-
 |[[explain]]`explain`|`Boolean`|-
-|[[extraSource]]`extraSource`|`Json object`|-
 |[[fetchSource]]`fetchSource`|`Boolean`|-
 |[[fields]]`fields`|`Array of String`|-
 |[[from]]`from`|`Number (Integer)`|-
@@ -382,9 +398,6 @@
 |[[searchType]]`searchType`|`link:enums.html#SearchType[SearchType]`|-
 |[[size]]`size`|`Number (Integer)`|-
 |[[sorts]]`sorts`|`Array of link:dataobjects.html#BaseSortOption[BaseSortOption]`|-
-|[[templateName]]`templateName`|`String`|-
-|[[templateParams]]`templateParams`|`Json object`|-
-|[[templateType]]`templateType`|`link:enums.html#ScriptType[ScriptType]`|-
 |[[terminateAfter]]`terminateAfter`|`Number (Integer)`|-
 |[[timeout]]`timeout`|`String`|-
 |[[trackScores]]`trackScores`|`Boolean`|-
@@ -539,7 +552,6 @@
 [frame="topbot"]
 |===
 ^|Name | Type ^| Description
-|[[consistencyLevel]]`consistencyLevel`|`link:enums.html#WriteConsistencyLevel[WriteConsistencyLevel]`|-
 |[[detectNoop]]`detectNoop`|`Boolean`|-
 |[[doc]]`doc`|`Json object`|-
 |[[docAsUpsert]]`docAsUpsert`|`Boolean`|-
@@ -557,6 +569,7 @@
 |[[upsert]]`upsert`|`Json object`|-
 |[[version]]`version`|`Number (Long)`|-
 |[[versionType]]`versionType`|`link:enums.html#VersionType[VersionType]`|-
+|[[waitForActiveShard]]`waitForActiveShard`|`Number (Integer)`|-
 |===
 
 [[UpdateResponse]]

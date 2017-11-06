@@ -18,7 +18,7 @@ package com.hubrick.vertx.elasticsearch.model;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.elasticsearch.script.ScriptService;
+import org.elasticsearch.script.ScriptType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
 public class UpdateOptions extends AbstractWriteOptions<UpdateOptions> {
 
     private String script;
-    private ScriptService.ScriptType scriptType;
+    private ScriptType scriptType;
     private String scriptLang;
     private JsonObject scriptParams;
     private List<String> fields = new ArrayList<>();
@@ -54,7 +54,7 @@ public class UpdateOptions extends AbstractWriteOptions<UpdateOptions> {
     public static final String FIELD_SCRIPTED_UPSERT = "scriptedUpsert";
 
     private static final String SCRIPT_TYPE_INLINE = "inline";
-    private static final String SCRIPT_TYPE_INDEXED = "indexed";
+    private static final String SCRIPT_TYPE_STORED = "stored";
     private static final String SCRIPT_TYPE_FILE = "file";
 
     public UpdateOptions() {
@@ -96,13 +96,13 @@ public class UpdateOptions extends AbstractWriteOptions<UpdateOptions> {
         if (s != null) {
             switch (s) {
                 case SCRIPT_TYPE_INLINE:
-                    scriptType = ScriptService.ScriptType.INLINE;
+                    scriptType = ScriptType.INLINE;
                     break;
-                case SCRIPT_TYPE_INDEXED:
-                    scriptType = ScriptService.ScriptType.INDEXED;
+                case SCRIPT_TYPE_STORED:
+                    scriptType = ScriptType.STORED;
                     break;
                 case SCRIPT_TYPE_FILE:
-                    scriptType = ScriptService.ScriptType.FILE;
+                    scriptType = ScriptType.FILE;
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported script type: " + s);
@@ -114,13 +114,13 @@ public class UpdateOptions extends AbstractWriteOptions<UpdateOptions> {
         return script;
     }
 
-    public UpdateOptions setScript(String script, ScriptService.ScriptType scriptType) {
+    public UpdateOptions setScript(String script, ScriptType scriptType) {
         this.script = script;
         this.scriptType = scriptType;
         return this;
     }
 
-    public ScriptService.ScriptType getScriptType() {
+    public ScriptType getScriptType() {
         return scriptType;
     }
 
