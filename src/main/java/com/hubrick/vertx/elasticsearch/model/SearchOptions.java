@@ -101,7 +101,7 @@ public class SearchOptions {
         trackScores = other.isTrackScores();
         aggregations = other.getAggregations();
         sorts = other.getSorts();
-        scriptFields = other.scriptFields;
+        scriptFields = other.getScriptFields();
     }
 
     public SearchOptions(JsonObject json) {
