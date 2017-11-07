@@ -23,6 +23,8 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -55,8 +57,7 @@ public class SearchOptionsTest {
                 .setExplain(true)
                 .setVersion(true)
                 .setFetchSource(true)
-                .addField("field1")
-                .addField("field2")
+                .setSourceIncludes(Arrays.asList("field1", "field2"))
                 .setTrackScores(true)
                 //.addAggregation(AggregationBuilders.terms("name"))
                 .addFieldSort("status", SortOrder.ASC)

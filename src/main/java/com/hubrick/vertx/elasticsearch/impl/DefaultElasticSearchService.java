@@ -92,10 +92,7 @@ import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.hubrick.vertx.elasticsearch.impl.ElasticSearchServiceMapper.*;
 
@@ -280,8 +277,15 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
             if (options.isExplain() != null) builder.setExplain(options.isExplain());
             if (options.isVersion() != null) builder.setVersion(options.isVersion());
             if (options.isFetchSource() != null) builder.setFetchSource(options.isFetchSource());
-            if (!options.getFields().isEmpty()) options.getFields().forEach(builder::addStoredField);
             if (options.isTrackScores() != null) builder.setTrackScores(options.isTrackScores());
+
+            if (!options.getSourceIncludes().isEmpty() || !options.getSourceExcludes().isEmpty()) {
+                builder.setFetchSource(
+                        options.getSourceIncludes().toArray(new String[options.getSourceIncludes().size()]),
+                        options.getSourceExcludes().toArray(new String[options.getSourceExcludes().size()])
+                );
+            }
+
             if (options.getAggregations() != null) {
                 options.getAggregations().forEach(aggregationOption -> {
                     try {

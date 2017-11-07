@@ -50,6 +50,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -161,8 +162,7 @@ public abstract class IntegrationTestBase extends AbstractVertxIntegrationTest {
                 .setTimeout("1000")
                 .setSize(10)
                 .setFrom(10)
-                .addField("user")
-                .addField("message")
+                .setSourceIncludes(Arrays.asList("user", "message"))
                 .addFieldSort("user", SortOrder.DESC)
                 .addScripSort("doc['message']", ScriptSortOption.Type.STRING, new JsonObject().put("param1", ImmutableList.of("1", "2", "3")), SortOrder.ASC)
                 .addScriptField("script_field", "doc['message']", new JsonObject().put("param1", ImmutableList.of("1", "2", "3")))

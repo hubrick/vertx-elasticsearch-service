@@ -15,13 +15,11 @@
  */
 package com.hubrick.vertx.elasticsearch.model;
 
-import com.google.common.base.Strings;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.GenIgnore;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.search.sort.SortOrder;
 
 import java.util.ArrayList;
@@ -50,7 +48,8 @@ public class SearchOptions {
     private Boolean explain;
     private Boolean version;
     private Boolean fetchSource;
-    private List<String> fields = new ArrayList<>();
+    private List<String> sourceIncludes = new ArrayList<>();
+    private List<String> sourceExcludes = new ArrayList<>();
     private Boolean trackScores;
     private List<AggregationOption> aggregations = new ArrayList<>();
     private List<BaseSortOption> sorts = new ArrayList<>();
@@ -71,7 +70,8 @@ public class SearchOptions {
     public static final String JSON_FIELD_EXPLAIN = "explain";
     public static final String JSON_FIELD_VERSION = "version";
     public static final String JSON_FIELD_FETCH_SOURCE = "fetchSource";
-    public static final String JSON_FIELD_FIELDS = "fields";
+    public static final String JSON_FIELD_SOURCE_INCLUDES = "sourceIncludes";
+    public static final String JSON_FIELD_SOURCE_EXCLUDES = "sourceExcludes";
     public static final String JSON_FIELD_TRACK_SCORES = "trackScores";
     public static final String JSON_FIELD_AGGREGATIONS = "aggregations";
     public static final String JSON_FIELD_SORTS = "sorts";
@@ -96,7 +96,8 @@ public class SearchOptions {
         explain = other.isExplain();
         version = other.isVersion();
         fetchSource = other.isFetchSource();
-        fields = other.getFields();
+        sourceIncludes = other.getSourceIncludes();
+        sourceExcludes = other.getSourceExcludes();
         trackScores = other.isTrackScores();
         aggregations = other.getAggregations();
         sorts = other.getSorts();
@@ -119,7 +120,8 @@ public class SearchOptions {
         explain = json.getBoolean(JSON_FIELD_EXPLAIN);
         version = json.getBoolean(JSON_FIELD_VERSION);
         fetchSource = json.getBoolean(JSON_FIELD_FETCH_SOURCE);
-        fields = json.getJsonArray(JSON_FIELD_FIELDS, new JsonArray()).getList();
+        sourceIncludes = json.getJsonArray(JSON_FIELD_SOURCE_INCLUDES, new JsonArray()).getList();
+        sourceExcludes = json.getJsonArray(JSON_FIELD_SOURCE_EXCLUDES, new JsonArray()).getList();
         trackScores = json.getBoolean(JSON_FIELD_TRACK_SCORES);
 
         JsonArray aggregationsJson = json.getJsonArray(JSON_FIELD_AGGREGATIONS);
@@ -239,12 +241,21 @@ public class SearchOptions {
         return this;
     }
 
-    public List<String> getFields() {
-        return fields;
+    public List<String> getSourceIncludes() {
+        return sourceIncludes;
     }
 
-    public SearchOptions addField(String field) {
-        fields.add(field);
+    public SearchOptions setSourceIncludes(List<String> sourceIncludes) {
+        this.sourceIncludes = sourceIncludes;
+        return this;
+    }
+
+    public List<String> getSourceExcludes() {
+        return sourceExcludes;
+    }
+
+    public SearchOptions setSourceExcludes(List<String> sourceExcludes) {
+        this.sourceExcludes = sourceExcludes;
         return this;
     }
 
@@ -377,7 +388,8 @@ public class SearchOptions {
         if (explain != null) json.put(JSON_FIELD_EXPLAIN, explain);
         if (version != null) json.put(JSON_FIELD_VERSION, version);
         if (fetchSource != null) json.put(JSON_FIELD_FETCH_SOURCE, fetchSource);
-        if (!fields.isEmpty()) json.put(JSON_FIELD_FIELDS, new JsonArray(fields));
+        if (!sourceIncludes.isEmpty()) json.put(JSON_FIELD_SOURCE_INCLUDES, new JsonArray(sourceIncludes));
+        if (!sourceExcludes.isEmpty()) json.put(JSON_FIELD_SOURCE_EXCLUDES, new JsonArray(sourceExcludes));
         if (trackScores != null) json.put(JSON_FIELD_TRACK_SCORES, trackScores);
         if (explain != null) json.put(JSON_FIELD_EXPLAIN, explain);
 

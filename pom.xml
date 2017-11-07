@@ -203,6 +203,7 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+            <!--
             <plugin>
                 <groupId>com.alexecollins.docker</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
@@ -238,6 +239,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

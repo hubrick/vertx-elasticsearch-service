@@ -386,7 +386,6 @@
 |[[aggregations]]`aggregations`|`Array of link:dataobjects.html#AggregationOption[AggregationOption]`|-
 |[[explain]]`explain`|`Boolean`|-
 |[[fetchSource]]`fetchSource`|`Boolean`|-
-|[[fields]]`fields`|`Array of String`|-
 |[[from]]`from`|`Number (Integer)`|-
 |[[minScore]]`minScore`|`Number (Float)`|-
 |[[postFilter]]`postFilter`|`Json object`|-
@@ -398,6 +397,8 @@
 |[[searchType]]`searchType`|`link:enums.html#SearchType[SearchType]`|-
 |[[size]]`size`|`Number (Integer)`|-
 |[[sorts]]`sorts`|`Array of link:dataobjects.html#BaseSortOption[BaseSortOption]`|-
+|[[sourceExcludes]]`sourceExcludes`|`Array of String`|-
+|[[sourceIncludes]]`sourceIncludes`|`Array of String`|-
 |[[terminateAfter]]`terminateAfter`|`Number (Integer)`|-
 |[[timeout]]`timeout`|`String`|-
 |[[trackScores]]`trackScores`|`Boolean`|-
