@@ -53,6 +53,7 @@ import org.elasticsearch.index.reindex.DeleteByQueryAction;
 import org.elasticsearch.index.reindex.DeleteByQueryRequestBuilder;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.adjacency.AdjacencyMatrixAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.filters.FiltersAggregationBuilder;
@@ -288,108 +289,7 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
 
             if (options.getAggregations() != null) {
                 options.getAggregations().forEach(aggregationOption -> {
-                    try {
-                        QueryParseContext context = new QueryParseContext(XContentType.JSON.xContent().createParser(NamedXContentRegistry.EMPTY, aggregationOption.getDefinition().encode()));
-                        switch (aggregationOption.getType()) {
-                            case TERMS:
-                                builder.addAggregation(TermsAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case MAX:
-                                builder.addAggregation(MaxAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case MIN:
-                                builder.addAggregation(MinAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case ADJACENCY_MATRIX:
-                                builder.addAggregation(AdjacencyMatrixAggregationBuilder.getParser().parse(aggregationOption.getName(), context));
-                                break;
-                            case SUM:
-                                builder.addAggregation(SumAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case RANGE:
-                                builder.addAggregation(RangeAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case STATS:
-                                builder.addAggregation(StatsAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case FILTER:
-                                builder.addAggregation(FilterAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case GLOBAL:
-                                builder.addAggregation(GlobalAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case NESTED:
-                                builder.addAggregation(NestedAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case AVERAGE:
-                                builder.addAggregation(AvgAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case FILTERS:
-                                builder.addAggregation(FiltersAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case MISSING:
-                                builder.addAggregation(MissingAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case SAMPLER:
-                                builder.addAggregation(SamplerAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case GEO_GRID:
-                                builder.addAggregation(GeoGridAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case IP_RANGE:
-                                builder.addAggregation(IpRangeAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case TOP_HITS:
-                                builder.addAggregation(TopHitsAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case HISTOGRAM:
-                                builder.addAggregation(HistogramAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case DATE_RANGE:
-                                builder.addAggregation(DateRangeAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case GEO_BOUNDS:
-                                builder.addAggregation(GeoBoundsAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case CARDINALITY:
-                                builder.addAggregation(CardinalityAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case PERCENTILES:
-                                builder.addAggregation(PercentilesAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case VALUE_COUNT:
-                                builder.addAggregation(ValueCountAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case GEO_CENTROID:
-                                builder.addAggregation(GeoCentroidAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case GEO_DISTANCE:
-                                builder.addAggregation(GeoDistanceAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case DATE_HISTOGRAM:
-                                builder.addAggregation(DateHistogramAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case EXTENDED_STATS:
-                                builder.addAggregation(ExtendedStatsAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case REVERSE_NESTED:
-                                builder.addAggregation(ReverseNestedAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case DIVERSIFIED_SAMPLER:
-                                builder.addAggregation(DiversifiedAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case SCRIPTED_METRIC:
-                                builder.addAggregation(ScriptedMetricAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            case PERCENTILE_RANKS:
-                                builder.addAggregation(PercentileRanksAggregationBuilder.parse(aggregationOption.getName(), context));
-                                break;
-                            default:
-                                break;
-                        }
-                    } catch (IOException ex) {
-                        System.out.println("Unable to parse the aggregations");
-                    }
+                   builder.addAggregation(parseAggregation(aggregationOption));
                 });
             }
             if (!options.getSorts().isEmpty()) {
@@ -599,6 +499,124 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
         }
 
         return list;
+    }
+
+    /**
+     * Convert recursively an AggregationOption in AggregationBuilder
+     * @param aggregationOption the aggregation option to parse
+     * @return the created aggregation builder if everything has been parsed correctly
+     */
+    private AggregationBuilder parseAggregation(AggregationOption aggregationOption) {
+        try {
+            AggregationBuilder result = null;
+            QueryParseContext context = new QueryParseContext(XContentType.JSON.xContent().createParser(NamedXContentRegistry.EMPTY, aggregationOption.getDefinition().encode())); 
+            switch (aggregationOption.getType()) {
+                case TERMS:
+                    result = TermsAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case MAX:
+                    result = MaxAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case MIN:
+                    result = MinAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case ADJACENCY_MATRIX:
+                    result = AdjacencyMatrixAggregationBuilder.getParser().parse(aggregationOption.getName(), context);
+                    break;
+                case SUM:
+                    result = SumAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case RANGE:
+                    result = RangeAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case STATS:
+                    result = StatsAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case FILTER:
+                    result = FilterAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case GLOBAL:
+                    result = GlobalAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case NESTED:
+                    result = NestedAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case AVERAGE:
+                    result = AvgAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case FILTERS:
+                    result = FiltersAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case MISSING:
+                    result = MissingAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case SAMPLER:
+                    result = SamplerAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case GEO_GRID:
+                    result = GeoGridAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case IP_RANGE:
+                    result = IpRangeAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case TOP_HITS:
+                    result = TopHitsAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case HISTOGRAM:
+                    result = HistogramAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case DATE_RANGE:
+                    result = DateRangeAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case GEO_BOUNDS:
+                    result = GeoBoundsAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case CARDINALITY:
+                    result = CardinalityAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case PERCENTILES:
+                    result = PercentilesAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case VALUE_COUNT:
+                    result = ValueCountAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case GEO_CENTROID:
+                    result = GeoCentroidAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case GEO_DISTANCE:
+                    result = GeoDistanceAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case DATE_HISTOGRAM:
+                    result = DateHistogramAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case EXTENDED_STATS:
+                    result = ExtendedStatsAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case REVERSE_NESTED:
+                    result = ReverseNestedAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case DIVERSIFIED_SAMPLER:
+                    result = DiversifiedAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case SCRIPTED_METRIC:
+                    result = ScriptedMetricAggregationBuilder.parse(aggregationOption.getName(), context);
+                    break;
+                case PERCENTILE_RANKS:
+                    result = PercentileRanksAggregationBuilder.parse(aggregationOption.getName(), context); 
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown aggregation type " + aggregationOption.getType());
+            }
+            for (AggregationOption subAggregation : aggregationOption.getSubAggregations()) {
+                result.subAggregation(parseAggregation(subAggregation));
+            }
+
+            return result;
+        } catch (IOException ex) {
+            System.out.println("Unable to parse the aggregations");
+            throw new IllegalArgumentException("Wrong aggregation definition " + aggregationOption.getDefinition());
+        }
+
     }
 
 }

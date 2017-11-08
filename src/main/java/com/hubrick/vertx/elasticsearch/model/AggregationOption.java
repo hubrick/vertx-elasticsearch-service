@@ -16,7 +16,12 @@
 package com.hubrick.vertx.elasticsearch.model;
 
 import io.vertx.codegen.annotations.DataObject;
+import io.vertx.codegen.annotations.GenIgnore;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Aggregation option
@@ -26,10 +31,12 @@ public class AggregationOption {
     private String name;
     private AggregationType type;
     private JsonObject definition;
+    private List<AggregationOption> subAggregations = new ArrayList<>();
 
-    public static final String JSON_FIELD_NAME = "name";
-    public static final String JSON_FIELD_TYPE = "type";
-    public static final String JSON_FIELD_DEFINITION = "definition";
+    private static final String JSON_FIELD_NAME = "name";
+    private static final String JSON_FIELD_TYPE = "type";
+    private static final String JSON_FIELD_DEFINITION = "definition";
+    private static final String JSON_FIELD_SUB_AGGREGATIONS = "subAggregations";
 
     public AggregationOption() {
     }
@@ -38,12 +45,20 @@ public class AggregationOption {
         name = other.getName();
         type = other.getType();
         definition = other.getDefinition();
+        subAggregations = other.getSubAggregations();
     }
 
     public AggregationOption(JsonObject json) {
         name = json.getString(JSON_FIELD_NAME);
         type = AggregationType.valueOf(json.getString(JSON_FIELD_TYPE));
         definition = json.getJsonObject(JSON_FIELD_DEFINITION);
+
+        JsonArray aggregationsJson = json.getJsonArray(JSON_FIELD_SUB_AGGREGATIONS);
+        if (aggregationsJson != null) {
+            for (int i = 0; i < aggregationsJson.size(); i++) {
+                subAggregations.add(new AggregationOption(aggregationsJson.getJsonObject(i)));
+            }
+        }
     }
 
     public enum AggregationType {
@@ -82,10 +97,34 @@ public class AggregationOption {
         return this;
     }
 
+    public List<AggregationOption> getSubAggregations() {
+        return subAggregations;
+    }
+
+    public AggregationOption setSubAggregations(List<AggregationOption> subAggregations) {
+        this.subAggregations = subAggregations;
+        return this;
+    }
+
+    @GenIgnore
+    public AggregationOption addSubAggregation(AggregationOption subAggregation) {
+        this.subAggregations.add(subAggregation);
+        return this;
+    }
+
     public JsonObject toJson() {
-        return new JsonObject()
+        JsonObject json = new JsonObject()
                 .put(JSON_FIELD_NAME, name)
                 .put(JSON_FIELD_TYPE, type)
                 .put(JSON_FIELD_DEFINITION, definition);
+
+        if (subAggregations != null && !subAggregations.isEmpty()) {
+            JsonArray aggregationArray = new JsonArray();
+            for (AggregationOption option : subAggregations) {
+                aggregationArray.add(option.toJson());
+            }
+            json.put(JSON_FIELD_SUB_AGGREGATIONS, aggregationArray);
+        }
+        return json;
     }
 }

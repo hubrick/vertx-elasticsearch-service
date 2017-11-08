@@ -33,6 +33,7 @@
 ^|Name | Type ^| Description
 |[[definition]]`definition`|`Json object`|-
 |[[name]]`name`|`String`|-
+|[[subAggregations]]`subAggregations`|`Array of link:dataobjects.html#AggregationOption[AggregationOption]`|-
 |[[type]]`type`|`link:enums.html#AggregationType[AggregationType]`|-
 |===
 
