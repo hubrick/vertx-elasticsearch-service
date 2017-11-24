@@ -38,8 +38,7 @@ The configuration options are as follows:
     "address": <address>,
     "transportAddresses": [ { "hostname": <hostname>, "port": <port> } ],
     "cluster_name": <cluster_name>,
-    "client_transport_sniff": <client_transport_sniff>,
-    "requireUnits": false
+    "client_transport_sniff": <client_transport_sniff>
 }
 ```
 
@@ -49,7 +48,6 @@ The configuration options are as follows:
     * `port` - the port of the node to connect to.  The default is `9300`.
 * `cluster_name` - the elastic search cluster name.  The default is `"elasticsearch"`.
 * `client_transport_sniff` - the client will sniff the rest of the cluster and add those into its list of machines to use.  The default is `true`.
-* `requireUnits` - boolean flag whether units are required.  The default is `false`.
 
 An example configuration would be:
 
