@@ -16,7 +16,7 @@
 package com.hubrick.vertx.elasticsearch;
 
 import io.vertx.core.AbstractVerticle;
-import io.vertx.serviceproxy.ProxyHelper;
+import io.vertx.serviceproxy.ServiceBinder;
 
 import javax.inject.Inject;
 
@@ -37,6 +37,9 @@ public class ElasticSearchServiceVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
 
+        // workaround for problem between ES netty and vertx (both wanting to set the same value)
+        System.setProperty("es.set.netty.runtime.available.processors", "false");
+
         String address = config().getString("address");
         if (address == null || address.isEmpty()) {
             throw new IllegalStateException("address field must be specified in config for service verticle");
@@ -47,8 +50,8 @@ public class ElasticSearchServiceVerticle extends AbstractVerticle {
         }
 
         // Register service as an event bus proxy
-        ProxyHelper.registerService(ElasticSearchService.class, vertx, service, address);
-        ProxyHelper.registerService(ElasticSearchAdminService.class, vertx, adminService, adminAddress);
+        new ServiceBinder(vertx).setAddress(address).register(ElasticSearchService.class, service);
+        new ServiceBinder(vertx).setAddress(adminAddress).register(ElasticSearchAdminService.class, adminService);
 
         // Start the service
         service.start();

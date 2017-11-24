@@ -16,17 +16,16 @@
 package com.hubrick.vertx.elasticsearch.model;
 
 import io.vertx.core.json.JsonObject;
-import org.elasticsearch.action.WriteConsistencyLevel;
 
 /**
  * Abstract options
  */
 public abstract class AbstractWriteOptions<T extends AbstractWriteOptions<T>> extends AbstractOptions<T> {
 
-    private WriteConsistencyLevel consistencyLevel;
+    private Integer waitForActiveShard;
     private String timeout;
 
-    public static final String FIELD_CONSISTENCY_LEVEL = "consistencyLevel";
+    public static final String FIELD_WAIT_FOR_ACTIVE_SHARD = "waitForActiveShard";
     public static final String FIELD_TIMEOUT = "timeout";
 
     protected AbstractWriteOptions() {
@@ -34,7 +33,7 @@ public abstract class AbstractWriteOptions<T extends AbstractWriteOptions<T>> ex
 
     protected AbstractWriteOptions(T other) {
         super(other);
-        consistencyLevel = other.getConsistencyLevel();
+        waitForActiveShard = other.getWaitForActiveShard();
         timeout = other.getTimeout();
     }
 
@@ -43,17 +42,17 @@ public abstract class AbstractWriteOptions<T extends AbstractWriteOptions<T>> ex
 
         timeout = json.getString(FIELD_TIMEOUT);
 
-        String s = json.getString(FIELD_CONSISTENCY_LEVEL);
-        if (s != null) consistencyLevel = WriteConsistencyLevel.fromString(s);
+        String s = json.getString(FIELD_WAIT_FOR_ACTIVE_SHARD);
+        if (s != null) waitForActiveShard = Integer.valueOf(s);
 
     }
 
-    public WriteConsistencyLevel getConsistencyLevel() {
-        return consistencyLevel;
+    public Integer getWaitForActiveShard() {
+        return waitForActiveShard;
     }
 
-    public T setConsistencyLevel(WriteConsistencyLevel consistencyLevel) {
-        this.consistencyLevel = consistencyLevel;
+    public T setWaitForActiveShard(Integer waitForActiveShard) {
+        this.waitForActiveShard = waitForActiveShard;
         return returnThis();
     }
 
@@ -70,8 +69,8 @@ public abstract class AbstractWriteOptions<T extends AbstractWriteOptions<T>> ex
     public JsonObject toJson() {
         JsonObject json = super.toJson();
 
-        if (getConsistencyLevel() != null) {
-            json.put(FIELD_CONSISTENCY_LEVEL, getConsistencyLevel().toString().toLowerCase());
+        if (getWaitForActiveShard() != null) {
+            json.put(FIELD_WAIT_FOR_ACTIVE_SHARD, getWaitForActiveShard().toString());
         }
         if (getTimeout() != null) json.put(FIELD_TIMEOUT, getTimeout());
 

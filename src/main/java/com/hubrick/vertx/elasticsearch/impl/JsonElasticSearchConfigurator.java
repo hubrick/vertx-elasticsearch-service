@@ -35,13 +35,11 @@ public class JsonElasticSearchConfigurator implements ElasticSearchConfigurator 
     protected String clusterName;
     protected boolean clientTransportSniff;
     protected final List<TransportAddress> transportAddresses = new ArrayList<>();
-    protected boolean requireUnits;
 
     public static final String CONFIG_NAME = "elasticsearch";
     public static final String CONFIG_TRANSPORT_ADDRESSES = "transportAddresses";
     public static final String CONFIG_HOSTNAME = "hostname";
     public static final String CONFIG_PORT = "port";
-    public static final String CONFIG_REQUIRE_UNITS = "requireUnits";
 
     @Inject
     public JsonElasticSearchConfigurator(Vertx vertx) {
@@ -64,7 +62,6 @@ public class JsonElasticSearchConfigurator implements ElasticSearchConfigurator 
         initClusterName(config);
         initClientTransportSniff(config);
         initTransportAddresses(config);
-        initRequireUnits(config);
     }
 
     protected void initClusterName(JsonObject config) {
@@ -97,10 +94,6 @@ public class JsonElasticSearchConfigurator implements ElasticSearchConfigurator 
 
     }
 
-    protected void initRequireUnits(JsonObject config) {
-        requireUnits = config.getBoolean(CONFIG_REQUIRE_UNITS, false);
-    }
-
     @Override
     public String getClusterName() {
         return clusterName;
@@ -109,11 +102,6 @@ public class JsonElasticSearchConfigurator implements ElasticSearchConfigurator 
     @Override
     public boolean getClientTransportSniff() {
         return clientTransportSniff;
-    }
-
-    @Override
-    public boolean getSettingsRequireUnits() {
-        return false;
     }
 
     @Override

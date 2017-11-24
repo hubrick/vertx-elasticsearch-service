@@ -22,7 +22,6 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -92,24 +91,36 @@ public class EnvElasticSearchConfiguratorTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Utility method to modify the Environment variables (System.getenv) - {@see https://stackoverflow.com/questions/318239/how-do-i-set-environment-variables-from-java}
+     * @param newenv the new list of environment variables/values
+     * @throws Exception if it fails
+     */
+    @SuppressWarnings("unchecked")
     private void setEnv(Map<String, String> newenv) throws Exception {
-        final Class[] classes = Collections.class.getDeclaredClasses();
-        final Map<String, String> env = System.getenv();
-
-        Arrays.asList(classes).stream()
-                .filter(c -> "java.util.Collections$UnmodifiableMap".equals(c.getName()))
-                .forEach(c -> newEnvForClass(c, env, newenv));
-    }
-
-    private void newEnvForClass(Class c, Map<String, String> env, Map<String, String> newenv) {
         try {
-            final Field field = c.getDeclaredField("m");
-            field.setAccessible(true);
-            final Map<String, String> map = (Map<String, String>) field.get(env);
-            map.clear();
-            map.putAll(newenv);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to update ENV", e);
+            Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
+            Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
+            theEnvironmentField.setAccessible(true);
+            Map<String, String> env = (Map<String, String>) theEnvironmentField.get(null);
+            env.putAll(newenv);
+            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
+            theCaseInsensitiveEnvironmentField.setAccessible(true);
+            Map<String, String> cienv = (Map<String, String>) theCaseInsensitiveEnvironmentField.get(null);
+            cienv.putAll(newenv);
+        } catch (NoSuchFieldException e) {
+            Class[] classes = Collections.class.getDeclaredClasses();
+            Map<String, String> env = System.getenv();
+            for(Class cl : classes) {
+                if("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
+                    Field field = cl.getDeclaredField("m");
+                    field.setAccessible(true);
+                    Object obj = field.get(env);
+                    Map<String, String> map = (Map<String, String>) obj;
+                    map.clear();
+                    map.putAll(newenv);
+                }
+            }
         }
     }
 }

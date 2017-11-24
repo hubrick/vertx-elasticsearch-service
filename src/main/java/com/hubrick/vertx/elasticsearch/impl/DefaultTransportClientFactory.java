@@ -18,7 +18,7 @@ package com.hubrick.vertx.elasticsearch.impl;
 import com.hubrick.vertx.elasticsearch.TransportClientFactory;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.plugin.deletebyquery.DeleteByQueryPlugin;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
 /**
  * Default implementation of {@link TransportClientFactory}
@@ -32,6 +32,6 @@ public class DefaultTransportClientFactory implements TransportClientFactory {
      */
     @Override
     public TransportClient create(Settings settings) {
-        return TransportClient.builder().addPlugin(DeleteByQueryPlugin.class).settings(settings).build();
+        return new PreBuiltTransportClient(settings);
     }
 }

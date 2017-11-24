@@ -65,7 +65,7 @@ public class DefaultElasticSearchAdminService implements InternalElasticSearchAd
             }
 
             @Override
-            public void onFailure(Throwable e) {
+            public void onFailure(Exception e) {
                 resultHandler.handle(Future.failedFuture(e));
             }
         });

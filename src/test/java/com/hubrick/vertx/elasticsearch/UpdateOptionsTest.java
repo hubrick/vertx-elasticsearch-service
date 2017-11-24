@@ -18,6 +18,7 @@ package com.hubrick.vertx.elasticsearch;
 import com.hubrick.vertx.elasticsearch.model.UpdateOptions;
 import io.vertx.core.json.JsonObject;
 import org.elasticsearch.script.ScriptService;
+import org.elasticsearch.script.ScriptType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +32,7 @@ public class UpdateOptionsTest {
     public void testUpdateOptions() throws Exception {
 
         UpdateOptions options1 = new UpdateOptions()
-                .setScript("script", ScriptService.ScriptType.INLINE);
+                .setScript("script", ScriptType.INLINE);
 
         JsonObject json1 = options1.toJson();
         assertEquals(2, json1.fieldNames().size());
@@ -42,7 +43,7 @@ public class UpdateOptionsTest {
         assertEquals(json1.encode(), json2.encode());
 
         options1 = new UpdateOptions()
-                .setScript("script", ScriptService.ScriptType.INLINE)
+                .setScript("script", ScriptType.INLINE)
                 .setScriptLang("js")
                 .setScriptParams(new JsonObject().put("p1", "1").put("p2", 2))
                 .addField("field1")

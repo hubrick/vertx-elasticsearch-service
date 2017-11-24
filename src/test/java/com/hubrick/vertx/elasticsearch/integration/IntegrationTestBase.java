@@ -47,8 +47,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -160,8 +162,7 @@ public abstract class IntegrationTestBase extends AbstractVertxIntegrationTest {
                 .setTimeout("1000")
                 .setSize(10)
                 .setFrom(10)
-                .addField("user")
-                .addField("message")
+                .setSourceIncludes(Arrays.asList("user", "message"))
                 .addFieldSort("user", SortOrder.DESC)
                 .addScripSort("doc['message']", ScriptSortOption.Type.STRING, new JsonObject().put("param1", ImmutableList.of("1", "2", "3")), SortOrder.ASC)
                 .addScriptField("script_field", "doc['message']", new JsonObject().put("param1", ImmutableList.of("1", "2", "3")))
@@ -201,7 +202,7 @@ public abstract class IntegrationTestBase extends AbstractVertxIntegrationTest {
 
         final Async async = testContext.async();
         SearchOptions options = new SearchOptions()
-                .setSearchType(SearchType.SCAN)
+                .setSearchType(SearchType.DEFAULT)
                 .setScroll("5m")
                 .setQuery(new JsonObject().put("match_all", new JsonObject()));
 
@@ -293,9 +294,9 @@ public abstract class IntegrationTestBase extends AbstractVertxIntegrationTest {
                 })
                 .subscribe(
                         deleteByQueryResponse -> {
-                            assertThat(testContext, deleteByQueryResponse.getTotalFound(), is(1l));
-                            assertThat(testContext, deleteByQueryResponse.getTotalDeleted(), is(1l));
-                            assertThat(testContext, deleteByQueryResponse.getTotalFailed(), is(0l));
+                            assertThat(testContext, deleteByQueryResponse.getTimedOut(), is(false));
+                            assertThat(testContext, deleteByQueryResponse.getDeleted(), is(1L));
+                            assertThat(testContext, deleteByQueryResponse.getFailures().size(), is(0));
 
                             async.complete();
                         },
@@ -314,7 +315,7 @@ public abstract class IntegrationTestBase extends AbstractVertxIntegrationTest {
                             assertThat(testContext, deleteResponse.getType(), is(type));
                             assertThat(testContext, deleteResponse.getId(), is(id));
                             assertThat(testContext, deleteResponse.getFound(), is(true));
-                            assertThat(testContext, deleteResponse.getVersion(), greaterThan(0l));
+                            assertThat(testContext, deleteResponse.getVersion(), greaterThan(0L));
 
                             async.complete();
                         },
