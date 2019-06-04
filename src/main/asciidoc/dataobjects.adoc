@@ -206,6 +206,7 @@
 |[[routing]]`routing`|`String`|-
 |[[scriptFields]]`scriptFields`|`link:dataobjects.html#ScriptFieldOption[ScriptFieldOption]`|-
 |[[scroll]]`scroll`|`String`|-
+|[[searchAfter]]`searchAfter`|`Json array`|-
 |[[searchType]]`searchType`|`link:enums.html#SearchType[SearchType]`|-
 |[[size]]`size`|`Number (Integer)`|-
 |[[slices]]`slices`|`Number (Integer)`|-
@@ -704,6 +705,7 @@
 |[[routing]]`routing`|`String`|-
 |[[scriptFields]]`scriptFields`|`link:dataobjects.html#ScriptFieldOption[ScriptFieldOption]`|-
 |[[scroll]]`scroll`|`String`|-
+|[[searchAfter]]`searchAfter`|`Json array`|-
 |[[searchType]]`searchType`|`link:enums.html#SearchType[SearchType]`|-
 |[[size]]`size`|`Number (Integer)`|-
 |[[sourceExcludes]]`sourceExcludes`|`Array of String`|-

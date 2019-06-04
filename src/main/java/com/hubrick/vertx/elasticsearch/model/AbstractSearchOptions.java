@@ -48,6 +48,7 @@ public abstract class AbstractSearchOptions<T extends AbstractSearchOptions<T>> 
     private Boolean fetchSource;
     private List<String> sourceIncludes = new ArrayList<>();
     private List<String> sourceExcludes = new ArrayList<>();
+    private JsonArray searchAfter = new JsonArray();
     private Boolean trackScores;
     private List<AggregationOption> aggregations = new ArrayList<>();
     private List<BaseSortOption> sorts = new ArrayList<>();
@@ -80,6 +81,7 @@ public abstract class AbstractSearchOptions<T extends AbstractSearchOptions<T>> 
     public static final String JSON_FIELD_STORED_FIELDS = "storedFields";
     public static final String JSON_FIELD_INDICES_OPTIONS = "indicesOptions";
     public static final String JSON_FIELD_SUGGESTIONS = "suggestions";
+    public static final String JSON_FIELD_SEARCH_AFTER = "searchAfter";
 
     public AbstractSearchOptions() {
     }
@@ -109,6 +111,7 @@ public abstract class AbstractSearchOptions<T extends AbstractSearchOptions<T>> 
         storedFields = other.getStoredFields();
         indicesOptions = other.getIndicesOptions();
         suggestions = other.getSuggestions();
+        searchAfter = other.getSearchAfter();
     }
 
     public AbstractSearchOptions(JsonObject json) {
@@ -132,6 +135,7 @@ public abstract class AbstractSearchOptions<T extends AbstractSearchOptions<T>> 
         trackScores = json.getBoolean(JSON_FIELD_TRACK_SCORES);
         storedFields = json.getJsonArray(JSON_FIELD_STORED_FIELDS, new JsonArray()).getList();
         indicesOptions = Optional.ofNullable(json.getJsonObject(JSON_FIELD_INDICES_OPTIONS)).map(IndicesOptions::new).orElse(null);
+        searchAfter = json.getJsonArray(JSON_FIELD_SEARCH_AFTER);
 
         JsonArray aggregationsJson = json.getJsonArray(JSON_FIELD_AGGREGATIONS);
         if (aggregationsJson != null) {
@@ -418,6 +422,20 @@ public abstract class AbstractSearchOptions<T extends AbstractSearchOptions<T>> 
         return returnThis();
     }
 
+    public JsonArray getSearchAfter() {
+        return searchAfter;
+    }
+
+    public T setSearchAfter(JsonArray searchAfter) {
+        this.searchAfter = searchAfter;
+        return returnThis();
+    }
+
+    @GenIgnore
+    public boolean hasSearchAfter() {
+        return this.searchAfter != null && !this.searchAfter.isEmpty();
+    }
+    
     public JsonObject toJson() {
 
         final JsonObject json = new JsonObject();
@@ -472,6 +490,10 @@ public abstract class AbstractSearchOptions<T extends AbstractSearchOptions<T>> 
             json.put(JSON_FIELD_SUGGESTIONS, jsonSuggestions);
         }
 
+        if (this.hasSearchAfter()) {
+            json.put(JSON_FIELD_SEARCH_AFTER, searchAfter);
+        }
+        
         return json;
     }
 

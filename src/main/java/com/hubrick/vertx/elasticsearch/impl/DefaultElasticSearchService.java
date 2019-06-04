@@ -770,6 +770,10 @@ public class DefaultElasticSearchService implements InternalElasticSearchService
                     break;
             }
         }
+
+        if (options.hasSearchAfter()) {
+            builder.searchAfter(options.getSearchAfter().stream().toArray());
+        }
     }
 
     private Script createScript(Optional<com.hubrick.vertx.elasticsearch.model.ScriptType> type, Optional<String> lang, Optional<JsonObject> params, String script) {

@@ -22,6 +22,7 @@ import com.hubrick.vertx.elasticsearch.model.ScriptSortOption;
 import com.hubrick.vertx.elasticsearch.model.SearchOptions;
 import com.hubrick.vertx.elasticsearch.model.SearchType;
 import com.hubrick.vertx.elasticsearch.model.SortOrder;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.junit.Test;
 
@@ -66,7 +67,9 @@ public class SearchOptionsTest {
                 .addFieldSort("status", SortOrder.ASC)
                 .addFieldSort("insert_date", SortOrder.ASC)
                 .addScripSort("doc['score']", ScriptSortOption.Type.NUMBER, new JsonObject(), SortOrder.ASC)
-                .addScriptField("script_field", "doc['score']", "painless", new JsonObject().put("param1", ImmutableList.of("1", "2", "3")));
+                .addScriptField("script_field", "doc['score']", "painless", new JsonObject().put("param1", ImmutableList.of("1", "2", "3")))
+                .setSearchAfter(new JsonArray().add(1).add("test"))
+        ;
 
         json1 = options1.toJson();
 
