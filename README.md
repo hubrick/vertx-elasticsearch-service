@@ -77,7 +77,7 @@ See the [englishtown/vertx-hk2](https://github.com/englishtown/vertx-hk2) or [en
 
 ### Index
 
-http://www.elasticsearch.org/guide/reference/api/index_/
+https://www.elastic.co/guide/reference/api/index_/
 
 ```java
     // Plain
@@ -114,7 +114,7 @@ http://www.elasticsearch.org/guide/reference/api/index_/
 
 ### Get
 
-http://www.elasticsearch.org/guide/reference/api/get/
+https://www.elastic.co/guide/reference/api/get/
 
 ```java
     // Plain
@@ -266,9 +266,9 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-multi-get.h
 
 ### Search
 
-http://www.elasticsearch.org/guide/reference/api/search/
+https://www.elastic.co/guide/reference/api/search/
 
-http://www.elasticsearch.org/guide/reference/query-dsl/
+https://www.elastic.co/guide/reference/query-dsl/
 
 ```java
     // Plain
@@ -353,7 +353,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-sea
 
 ### Scroll
 
-http://www.elasticsearch.org/guide/reference/api/search/scroll/
+https://www.elastic.co/guide/reference/api/search/scroll/
 
 First send a search message with `search_type` = `"scan"` and `scroll` = `"5m"` (some time string).  The search result will include a `_scroll_id` that will be valid for the scroll time specified.
 
@@ -386,8 +386,7 @@ First send a search message with `search_type` = `"scan"` and `scroll` = `"5m"` 
 ```
 
 ### Delete
-
-http://www.elasticsearch.org/guide/reference/api/delete/
+https://www.elastic.co/guide/reference/api/delete/
 
 ```java
 {
