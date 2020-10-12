@@ -49,7 +49,7 @@
         <vertx.guice.version>2.3.1</vertx.guice.version>
         <when.version>4.1.1</when.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <commons-lang3.version>3.7</commons-lang3.version>
 
         <!--Vert.x codegen does not play nice with maven-compiler-plugin 3.2-->
